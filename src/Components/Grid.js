@@ -1,5 +1,5 @@
 import React from 'react';
-import '/Users/saisrujan/OneDrive/Desktop/sudoku/src/Components/Grid.css'
+import './Grid.css';
 function Grid()
 {
     return(
