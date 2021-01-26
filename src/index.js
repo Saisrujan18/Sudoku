@@ -9,7 +9,7 @@ ReactDOM.render(
   <React.StrictMode>
     {/* <Grid /> */}
     <App />
-    {/* <Data/> */}
+    <Data/>
   </React.StrictMode>,
   document.getElementById('root')
 );
