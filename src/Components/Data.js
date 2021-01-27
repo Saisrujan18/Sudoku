@@ -8,7 +8,8 @@ function Data()
     const [sudoku,UpdateSudoku] = useState([[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]);
     const [final,UpdateFinal]= useState([[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]);
     const axios =require('axios');
-
+    const [changes,UpdateChange]=useState("");
+    const [elem,evole]=useState("");
     function Easy()
     {
     	axios({
@@ -67,45 +68,64 @@ function Data()
     }
     function Update(event)
     {
+        // const tempo=sudoku;
         const idef=event.target.id;
-        const row=idef/10;
-        const col=idef%10;
-        const temp=final;
-        temp[row][col]=event.target.value;
+        const row= (    (   idef-(idef%10)   )/10   )  -1;
+        const col=idef%10-1;
+        var temp=final;
+        // console.log(temp);
+        event.target.value==null?temp[row][col]=null:temp[row][col]=event.target.value;
+        // console.log(sudoku);
+        // console.log(final);
         UpdateFinal(temp);
+        // UpdateSudoku(sudoku);
+        // evole(event.target.value);
+        // console.log(sudoku);
+        // console.log(final);
     }
+    function view(props)
+    {
+        if(props==0)
+        {
+            return "";
+        }
+        return props;
+    }
+
     function DIP(i,j)
     {
-        const option=sudoku[i][j];
-        // var I=i.toString();
-        // var J=j.toString();
-        var ide=(i+1)*10+(j+1)*10;
-        var ce=(i+j*9).toString();
+        var ide=(i+1)*10+(j+1);
+        var ce=(j+i*9).toString();
         ce="cell-"+ce;
-        if(option==0)
+        if(sudoku[i][j]==0)
         {
             return(
-                <input type="tel" className={ce} id={ide} value={final[i][j]} onChange={Update}></input>
+                <input type="tel" className={ce} id={ide} value={view(final[i][j])} onChange={Update}></input>
             )
         }
-        return(
-            <input type="tel"  className={ce} id={ide} value={option} disabled></input>
-        )
+        else
+        {
+            return(
+                <input type="tel"  className={ce} id={ide} value={sudoku[i][j]} disabled></input>
+            )
+        }
     }
     function DISPLAY(props)
     {
         return(
             <div>
-                {DIP(0,props)}{DIP(1,props)}{DIP(2,props)}
-                {DIP(3,props)}{DIP(4,props)}{DIP(5,props)}
-                {DIP(6,props)}{DIP(7,props)}{DIP(8,props)}
+                {DIP(props,0)}{DIP(props,1)}{DIP(props,2)}
+                {DIP(props,3)}{DIP(props,4)}{DIP(props,5)}
+                {DIP(props,6)}{DIP(props,7)}{DIP(props,8)}
             </div>
         );
     }
-    
-	function show(props)
+    function Submit()
     {
-        // console.log(props);
+        console.log(final);
+    }
+	function show()
+    {
         return(
             <div className="MAIN">
                 {DISPLAY(0)}  {DISPLAY(1)}  {DISPLAY(2)}
@@ -117,13 +137,15 @@ function Data()
 
     return (
             <div>
+                {show()}
                 <div className="button">
                 <button onClick={Easy} className="buttons">Easy</button>
                 <button onClick={Medium} className="buttons">Medium</button>
                 <button onClick={Hard} className="buttons">Hard</button>
                 <button onClick={Random} className="buttons">Random</button>
                 </div>
-                {show(sudoku)}
+                <button onClick={Submit} className="subm">Submit</button>
+                {/* {Result()} */}
             </div>
             )
 }
