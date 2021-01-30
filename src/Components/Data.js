@@ -1,15 +1,15 @@
 import react,{ useState}  from 'react';
 import "./Grid.css";
 import "../ALLCSS.css";
-import { findAllByDisplayValue } from '@testing-library/react';
+// import { findAllByDisplayValue } from '@testing-library/react';
 
 function Data()
 {
     const [sudoku,UpdateSudoku] = useState([[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]);
     const [final,UpdateFinal]= useState([[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]);
     const axios =require('axios');
-    const [changes,UpdateChange]=useState("");
-    const [elem,evole]=useState("");
+    const [correct,UpdateCorrect]=useState(0);
+    const [answer,UpdateAnswer]= useState([[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]);
     function Easy()
     {
     	axios({
@@ -18,13 +18,53 @@ function Data()
         })
         .then(res =>
             {
-                // console.log(res.data.board);
+                console.log(res.data.board);
                 UpdateSudoku(res.data.board);
                 UpdateFinal(res.data.board);
+                UpdateCorrect(0);
             })
         .catch(err =>console.error(err));
-	}
-	function Medium()
+
+
+
+        const encodeBoard = (board) => board.reduce((result, row, i) => result + `%5B${encodeURIComponent(row)}%5D${i === board.length -1 ? '' : '%2C'}`, '')
+        const encodeParams = (params) => 
+        Object.keys(params)
+        .map(key => key + '=' + `%5B${encodeBoard(params[key])}%5D`)
+        .join('&');
+        
+        var board=[];
+        for(var i=0;i<9;i++)
+        {
+            board=[...board,sudoku[i]];
+        }
+        var data={board};
+        
+        // axios
+        //     .post('https://sugoku.herokuapp.com/solve', {data})
+        //     // .then(response => response.json())
+        //     .then(response => console.log(response))
+        
+        //     .catch(console.warn)
+        fetch('https://sugoku.herokuapp.com/solve', {
+            method: 'POST',
+            body: encodeParams(data),
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        .then(response => response.json())
+        .then(response => {
+            // for(var i=0;i<9;i++)
+            // {
+            //     // console.log(response.solution[i]);
+            //     ans=[...ans,response.solution[i]];
+            //     // console.log(ans);
+            // }
+            // // console.log(ans);
+            UpdateAnswer(response.solution);
+        })
+        .catch(console.warn)
+    }
+    function Medium()
     {
     	axios({
         	method:'get',
@@ -32,13 +72,52 @@ function Data()
         })
         .then(res =>
             {
-                // console.log(res.data.board);
                 UpdateSudoku(res.data.board);
                 UpdateFinal(res.data.board);
+                UpdateCorrect(0);
             })
         .catch(err =>console.error(err));
+
+
+
+        const encodeBoard = (board) => board.reduce((result, row, i) => result + `%5B${encodeURIComponent(row)}%5D${i === board.length -1 ? '' : '%2C'}`, '')
+        const encodeParams = (params) => 
+        Object.keys(params)
+        .map(key => key + '=' + `%5B${encodeBoard(params[key])}%5D`)
+        .join('&');
+        
+        var board=[];
+        for(var i=0;i<9;i++)
+        {
+            board=[...board,sudoku[i]];
+        }
+        var data={board};
+        
+        // axios
+        //     .post('https://sugoku.herokuapp.com/solve', {data})
+        //     // .then(response => response.json())
+        //     .then(response => console.log(response))
+        
+        //     .catch(console.warn)
+        fetch('https://sugoku.herokuapp.com/solve', {
+            method: 'POST',
+            body: encodeParams(data),
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        .then(response => response.json())
+        .then(response => {
+            // for(var i=0;i<9;i++)
+            // {
+            //     // console.log(response.solution[i]);
+            //     ans=[...ans,response.solution[i]];
+            //     // console.log(ans);
+            // }
+            // // console.log(ans);
+            UpdateAnswer(response.solution);
+        })
+        .catch(console.warn)
 	}
-	function Hard()
+    function Hard()
     {
     	axios({
         	method:'get',
@@ -46,13 +125,52 @@ function Data()
         })
         .then(res =>
             {
-                // console.log(res.data.board);
                 UpdateSudoku(res.data.board);
                 UpdateFinal(res.data.board);
+                UpdateCorrect(0);
             })
         .catch(err =>console.error(err));
-	}
-	function Random()
+
+
+
+        const encodeBoard = (board) => board.reduce((result, row, i) => result + `%5B${encodeURIComponent(row)}%5D${i === board.length -1 ? '' : '%2C'}`, '')
+        const encodeParams = (params) => 
+        Object.keys(params)
+        .map(key => key + '=' + `%5B${encodeBoard(params[key])}%5D`)
+        .join('&');
+        
+        var board=[];
+        for(var i=0;i<9;i++)
+        {
+            board=[...board,sudoku[i]];
+        }
+        var data={board};
+        
+        // axios
+        //     .post('https://sugoku.herokuapp.com/solve', {data})
+        //     // .then(response => response.json())
+        //     .then(response => console.log(response))
+        
+        //     .catch(console.warn)
+        fetch('https://sugoku.herokuapp.com/solve', {
+            method: 'POST',
+            body: encodeParams(data),
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        .then(response => response.json())
+        .then(response => {
+            // for(var i=0;i<9;i++)
+            // {
+            //     // console.log(response.solution[i]);
+            //     ans=[...ans,response.solution[i]];
+            //     // console.log(ans);
+            // }
+            // // console.log(ans);
+            UpdateAnswer(response.solution);
+        })
+        .catch(console.warn)
+    }
+    function Random()
     {
     	axios({
         	method:'get',
@@ -60,28 +178,84 @@ function Data()
         })
         .then(res =>
             {
-                // console.log(res.data.board);
+                console.log(res.data.board);
                 UpdateSudoku(res.data.board);
                 UpdateFinal(res.data.board);
+                UpdateCorrect(0);
             })
         .catch(err =>console.error(err));
-    }
+
+
+
+        const encodeBoard = (board) => board.reduce((result, row, i) => result + `%5B${encodeURIComponent(row)}%5D${i === board.length -1 ? '' : '%2C'}`, '')
+        const encodeParams = (params) => 
+        Object.keys(params)
+        .map(key => key + '=' + `%5B${encodeBoard(params[key])}%5D`)
+        .join('&');
+        
+        var board=[];
+        for(var i=0;i<9;i++)
+        {
+            board=[...board,sudoku[i]];
+        }
+        var data={board};
+        
+        // axios
+        //     .post('https://sugoku.herokuapp.com/solve', {data})
+        //     // .then(response => response.json())
+        //     .then(response => console.log(response))
+        
+        //     .catch(console.warn)
+        fetch('https://sugoku.herokuapp.com/solve', {
+            method: 'POST',
+            body: encodeParams(data),
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        .then(response => response.json())
+        .then(response => {
+            // for(var i=0;i<9;i++)
+            // {
+            //     // console.log(response.solution[i]);
+            //     ans=[...ans,response.solution[i]];
+            //     // console.log(ans);
+            // }
+            // // console.log(ans);
+            UpdateAnswer(response.solution);
+        })
+        .catch(console.warn)
+	}
     function Update(event)
     {
-        // const tempo=sudoku;
         const idef=event.target.id;
+        const va=event.target.value;
         const row= (    (   idef-(idef%10)   )/10   )  -1;
         const col=idef%10-1;
-        var temp=final;
-        // console.log(temp);
-        event.target.value==null?temp[row][col]=null:temp[row][col]=event.target.value;
-        // console.log(sudoku);
-        // console.log(final);
+        var temp=[];
+        for(var i=0;i<9;i++)
+        {
+            if(i==row)
+            {
+                var verytemp=[];
+                for(var j=0;j<9;j++)
+                {
+                    if(j==col)
+                    {
+                        verytemp=[...verytemp,va];
+                    }
+                    else
+                    {
+                        verytemp=[...verytemp,final[i][j]];
+                    }
+                }
+                temp=[...temp,verytemp];
+            }
+            else
+            {
+                temp=[...temp,final[i]];
+            }
+        }
+        // temp[row][col]=va;
         UpdateFinal(temp);
-        // UpdateSudoku(sudoku);
-        // evole(event.target.value);
-        // console.log(sudoku);
-        // console.log(final);
     }
     function view(props)
     {
@@ -91,7 +265,10 @@ function Data()
         }
         return props;
     }
-
+    function indir(props)
+    {
+        return props;
+    }
     function DIP(i,j)
     {
         var ide=(i+1)*10+(j+1);
@@ -106,9 +283,10 @@ function Data()
         else
         {
             return(
-                <input type="tel"  className={ce} id={ide} value={sudoku[i][j]} disabled></input>
+            <input type="tel"  className={ce} id={ide} value={indir(sudoku[i][j])} onChange={Update} disabled></input>
             )
         }
+        
     }
     function DISPLAY(props)
     {
@@ -122,7 +300,30 @@ function Data()
     }
     function Submit()
     {
-        console.log(final);
+        var sofar=true;
+        for(var i=0;i<9;i++)
+        {
+            for(var j=0;j<9;j++)
+            {
+                if(final[i][j]==answer[i][j] || final[i][j]==answer[i][j].toString())
+                {
+                    continue;
+                }
+                else
+                {
+                    sofar=false;
+                    break;
+                }
+            }
+            if(sofar==false)break;
+        }
+        if(sofar==true)
+        {
+            UpdateCorrect(1);
+        }
+        else{
+            UpdateCorrect(2);
+        }
     }
 	function show()
     {
@@ -134,9 +335,25 @@ function Data()
             </div>
         );
     }
-
+    function Result(props)
+    {
+        if(props==0)
+        {
+            return(<p>{""}</p>)
+        }
+        else if(props==1)
+        {
+            return(<p className="correct">YOU HAVE DONE IT !</p>)
+        }
+        else
+        {
+            return(<p className="wrong">TRY AGAIN !</p>)
+            // return(<p className="correct">YOU HAVE DONE IT !</p>)
+        }
+    }
     return (
             <div>
+                 {Result(correct)}
                 {show()}
                 <div className="button">
                 <button onClick={Easy} className="buttons">Easy</button>
@@ -144,8 +361,7 @@ function Data()
                 <button onClick={Hard} className="buttons">Hard</button>
                 <button onClick={Random} className="buttons">Random</button>
                 </div>
-                <button onClick={Submit} className="subm">Submit</button>
-                {/* {Result()} */}
+                <button onClick={Submit} className="buttons submitButton">Submit</button>
             </div>
             )
 }
